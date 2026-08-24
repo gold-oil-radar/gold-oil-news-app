@@ -17,9 +17,12 @@
     </div>
     <div class="controls">
       <input id="search" type="search" placeholder="Rechercher (ex: Fed, OPEC, Brent...)">
+      <button id="alert-btn" title="Recevoir une notification pour les infos très importantes">🔔 Activer les alertes</button>
       <button id="refresh-btn" title="Recharger les dernières données">↻ Recharger</button>
     </div>
   </header>
+
+  <div id="toast-container" class="toast-container"></div>
 
   <section class="market-pulse">
     <div class="market-pulse-header">
@@ -99,7 +102,7 @@
   </main>
 
   <footer>
-    <p>Site statique hébergé sur GitHub Pages — mis à jour automatiquement toutes les 15 minutes par GitHub Actions, sans dépendre d'un ordinateur allumé. ~28 sources gratuites : agences officielles (Fed, BCE, Bank of England, EIA) et journaux mondiaux (OilPrice, FXStreet, Investing.com, Mining.com, Nasdaq, MarketWatch, CNBC, Yahoo Finance, Guardian, Sky News, Financial Times, SCMP, Times of India, Deutsche Welle, ABC Australia, Straits Times, Al Jazeera, BFM Bourse, Le Figaro, Le Monde...).</p>
+    <p>Site statique hébergé sur GitHub Pages — mis à jour automatiquement toutes les 5 minutes par GitHub Actions, sans dépendre d'un ordinateur allumé. ~28 sources gratuites : agences officielles (Fed, BCE, Bank of England, EIA) et journaux mondiaux (OilPrice, FXStreet, Investing.com, Mining.com, Nasdaq, MarketWatch, CNBC, Yahoo Finance, Guardian, Sky News, Financial Times, SCMP, Times of India, Deutsche Welle, ABC Australia, Straits Times, Al Jazeera, BFM Bourse, Le Figaro, Le Monde...). Active les alertes pour être notifié des infos à fort impact (décisions de taux, annonces OPEP, événements géopolitiques majeurs).</p>
   </footer>
 
   <script src="app.js"></script>

@@ -98,11 +98,30 @@ MACRO_PATTERNS = [
     r"\binflation\b", r"\bcpi\b", r"\bpce\b", r"bank of england",
     r"politique mon[ée]taire", r"\bpowell\b", r"\blagarde\b",
 ]
+# Signaux à fort impact immédiat -> déclenchent une notification/pop-up côté client
+IMPORTANT_PATTERNS = [
+    # décisions de taux actées (pas juste des anticipations)
+    r"\braises? (its |interest )?rates?\b", r"\bcuts? (its |interest )?rates?\b",
+    r"\bhikes? rates?\b", r"\brate decision\b", r"hausse des taux", r"baisse des taux",
+    r"\bfomc statement\b", r"\bemergency meeting\b", r"r[ée]union d.urgence",
+    # OPEP / offre pétrolière
+    r"\bopec\+? (agrees?|announces?|cuts?|raises?)\b", r"production cut", r"production increase",
+    r"l.op[ée]p (annonce|d[ée]cide)",
+    # mouvements de prix extrêmes
+    r"\bsurges?\b", r"\bplunges?\b", r"\bcrashes?\b", r"\bsoars?\b",
+    r"record high", r"record low", r"all-time high", r"record historique",
+    r"s.effondre", r"bondit", r"flambe", r"chute libre",
+    # géopolitique à impact direct sur l'offre
+    r"\battack(s|ed)? on\b", r"\bstrikes? on\b", r"\bexplosion at\b", r"\binvasion\b",
+    r"\bceasefire\b", r"sanctions on\b", r"\bblockade\b",
+    r"attaque contre", r"cessez-le-feu", r"sanctions contre",
+]
 
 GOLD_RE = re.compile("|".join(GOLD_PATTERNS), re.IGNORECASE)
 OIL_RE = re.compile("|".join(OIL_PATTERNS), re.IGNORECASE)
 COMMODITY_RE = re.compile("|".join(COMMODITY_PATTERNS), re.IGNORECASE)
 MACRO_RE = re.compile("|".join(MACRO_PATTERNS), re.IGNORECASE)
+IMPORTANT_RE = re.compile("|".join(IMPORTANT_PATTERNS), re.IGNORECASE)
 
 _translation_cache_lock = threading.Lock()
 _translation_cache = {}
@@ -246,6 +265,7 @@ def fetch_feed(feed):
                 "source": feed["name"],
                 "lang": feed["lang"],
                 "tags": tags or ([feed.get("default_tag", "matieres-premieres")] if feed["always_relevant"] else []),
+                "important": bool(IMPORTANT_RE.search(haystack)),
                 "published_iso": published.isoformat() if published else None,
                 "published_ts": published.timestamp() if published else 0,
             })
