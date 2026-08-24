@@ -42,6 +42,7 @@ const TAG_LABELS = {
   "or": "🥇 Or",
   "petrole": "🛢️ Pétrole",
   "matieres-premieres": "⛏️ Matières premières",
+  "macro": "🏦 Banques centrales",
 };
 
 function render() {

@@ -7,6 +7,7 @@
   --accent-gold: #e0b84b;
   --accent-oil: #4ba3e0;
   --accent-commodity: #6de08a;
+  --accent-macro: #c88ce6;
   --card-hover: #1a2130;
   --radius: 10px;
 }
@@ -178,6 +179,7 @@ body {
 .badge.or { background: rgba(224,184,75,0.15); color: var(--accent-gold); }
 .badge.petrole { background: rgba(75,163,224,0.15); color: var(--accent-oil); }
 .badge.matieres-premieres { background: rgba(109,224,138,0.15); color: var(--accent-commodity); }
+.badge.macro { background: rgba(200,140,230,0.15); color: var(--accent-macro); }
 
 footer {
   text-align: center;

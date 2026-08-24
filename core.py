@@ -28,17 +28,30 @@ USER_AGENT = (
     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 )
 
-MAX_ARTICLES = 150
+MAX_ARTICLES = 200
 FETCH_TIMEOUT = 10
 
 # always_relevant=True  -> flux dédiés matières premières/or/pétrole, on garde tout
 # always_relevant=False -> flux économiques généralistes, on filtre par mots-clés
+# default_tag           -> tag appliqué quand always_relevant=True et qu'aucun mot-clé ne matche (def: matieres-premieres)
 FEEDS = [
+    # --- Sources dédiées matières premières / commodities ---
     {"name": "OilPrice.com", "url": "https://oilprice.com/rss/main", "always_relevant": True, "lang": "en"},
     {"name": "FXStreet (Forex & Commodities)", "url": "https://www.fxstreet.com/rss/news", "always_relevant": True, "lang": "en"},
     {"name": "Investing.com Commodities", "url": "https://www.investing.com/rss/news_11.rss", "always_relevant": True, "lang": "en"},
     {"name": "Mining.com", "url": "https://www.mining.com/feed/", "always_relevant": True, "lang": "en"},
     {"name": "Nasdaq Commodities", "url": "https://www.nasdaq.com/feed/rssoutbound?category=Commodities", "always_relevant": True, "lang": "en"},
+    {"name": "EIA - Today in Energy", "url": "https://www.eia.gov/rss/todayinenergy.xml", "always_relevant": True, "lang": "en", "default_tag": "petrole"},
+
+    # --- Sources officielles (banques centrales) : le driver n°1 du prix de l'or ---
+    # always_relevant=False ici : ces flux mêlent décisions de taux (très pertinent) et
+    # communiqués administratifs (agréments bancaires, enquêtes FX...) qu'on ne veut pas voir.
+    # Seuls les communiqués qui matchent MACRO_RE (taux, inflation, FOMC...) sont gardés.
+    {"name": "Federal Reserve - Communiqués", "url": "https://www.federalreserve.gov/feeds/press_all.xml", "always_relevant": False, "lang": "en"},
+    {"name": "BCE - Communiqués", "url": "https://www.ecb.europa.eu/rss/press.xml", "always_relevant": False, "lang": "en"},
+    {"name": "Bank of England - News", "url": "https://www.bankofengland.co.uk/rss/news", "always_relevant": False, "lang": "en"},
+
+    # --- Journaux économiques généralistes (filtrés par mots-clés) ---
     {"name": "MarketWatch - Top Stories", "url": "http://feeds.marketwatch.com/marketwatch/topstories/", "always_relevant": False, "lang": "en"},
     {"name": "MarketWatch - MarketPulse", "url": "http://feeds.marketwatch.com/marketwatch/marketpulse/", "always_relevant": False, "lang": "en"},
     {"name": "CNBC Markets", "url": "https://www.cnbc.com/id/20910258/device/rss/rss.html", "always_relevant": False, "lang": "en"},
@@ -46,8 +59,20 @@ FEEDS = [
     {"name": "Seeking Alpha", "url": "https://seekingalpha.com/market_currents.xml", "always_relevant": False, "lang": "en"},
     {"name": "Business Insider Markets", "url": "https://markets.businessinsider.com/rss/news", "always_relevant": False, "lang": "en"},
     {"name": "BBC Business", "url": "http://feeds.bbci.co.uk/news/business/rss.xml", "always_relevant": False, "lang": "en"},
+    {"name": "The Guardian - Business", "url": "https://www.theguardian.com/uk/business/rss", "always_relevant": False, "lang": "en"},
+    {"name": "Sky News - Business", "url": "https://feeds.skynews.com/feeds/rss/business.xml", "always_relevant": False, "lang": "en"},
+    {"name": "Financial Times", "url": "https://www.ft.com/rss/home", "always_relevant": False, "lang": "en"},
+    {"name": "South China Morning Post - Business", "url": "https://www.scmp.com/rss/92/feed", "always_relevant": False, "lang": "en"},
+    {"name": "Times of India - Business", "url": "https://timesofindia.indiatimes.com/rssfeeds/1898055.cms", "always_relevant": False, "lang": "en"},
+    {"name": "Deutsche Welle - Business", "url": "https://rss.dw.com/rdf/rss-en-bus", "always_relevant": False, "lang": "en"},
+    {"name": "ABC News Australia - Business", "url": "https://www.abc.net.au/news/feed/51892/rss.xml", "always_relevant": False, "lang": "en"},
+    {"name": "Straits Times - World", "url": "https://www.straitstimes.com/news/business/rss.xml", "always_relevant": False, "lang": "en"},
     {"name": "Al Jazeera (Monde)", "url": "https://www.aljazeera.com/xml/rss/all.xml", "always_relevant": False, "lang": "en"},
+
+    # --- Journaux francophones ---
     {"name": "BFM Bourse", "url": "https://www.bfmtv.com/rss/economie/", "always_relevant": False, "lang": "fr"},
+    {"name": "Le Figaro - Economie", "url": "https://www.lefigaro.fr/rss/figaro_economie.xml", "always_relevant": False, "lang": "fr"},
+    {"name": "Le Monde - Economie", "url": "https://www.lemonde.fr/economie/rss_full.xml", "always_relevant": False, "lang": "fr"},
 ]
 
 GOLD_PATTERNS = [
@@ -66,10 +91,18 @@ COMMODITY_PATTERNS = [
     r"mati[èe]res? premi[èe]res?", r"\bargent m[ée]tal\b", r"\bcuivre\b",
     r"\bminerai\b", r"\bnickel\b", r"\blithium\b",
 ]
+MACRO_PATTERNS = [
+    r"\bfed\b", r"\bfomc\b", r"federal reserve", r"\brate cut", r"\brate hike",
+    r"interest rate", r"taux d.int[ée]r[êe]t", r"taux directeur", r"banque centrale",
+    r"\becb\b", r"european central bank", r"quantitative easing",
+    r"\binflation\b", r"\bcpi\b", r"\bpce\b", r"bank of england",
+    r"politique mon[ée]taire", r"\bpowell\b", r"\blagarde\b",
+]
 
 GOLD_RE = re.compile("|".join(GOLD_PATTERNS), re.IGNORECASE)
 OIL_RE = re.compile("|".join(OIL_PATTERNS), re.IGNORECASE)
 COMMODITY_RE = re.compile("|".join(COMMODITY_PATTERNS), re.IGNORECASE)
+MACRO_RE = re.compile("|".join(MACRO_PATTERNS), re.IGNORECASE)
 
 _translation_cache_lock = threading.Lock()
 _translation_cache = {}
@@ -170,6 +203,8 @@ def classify(text):
         tags.append("petrole")
     if COMMODITY_RE.search(text):
         tags.append("matieres-premieres")
+    if MACRO_RE.search(text):
+        tags.append("macro")
     return tags
 
 
@@ -210,7 +245,7 @@ def fetch_feed(feed):
                 "link": link,
                 "source": feed["name"],
                 "lang": feed["lang"],
-                "tags": tags or (["matieres-premieres"] if feed["always_relevant"] else []),
+                "tags": tags or ([feed.get("default_tag", "matieres-premieres")] if feed["always_relevant"] else []),
                 "published_iso": published.isoformat() if published else None,
                 "published_ts": published.timestamp() if published else 0,
             })

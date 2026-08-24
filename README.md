@@ -24,10 +24,12 @@ tunnel Cloudflare vers d'autres appareils, bouton de rafraîchissement manuel im
 
 ## Fonctionnement
 
-- `core.py` contient toute la logique partagée : ~14 flux RSS (OilPrice.com, FXStreet,
-  Investing.com Commodities, Mining.com, Nasdaq Commodities, MarketWatch, CNBC,
-  Yahoo Finance, Seeking Alpha, Business Insider, BBC Business, Al Jazeera, BFM Bourse),
-  classification par mots-clés (or/pétrole/matières premières), traduction français
+- `core.py` contient toute la logique partagée : ~28 flux RSS gratuits — sources officielles
+  (Federal Reserve, BCE, Bank of England, EIA) et journaux mondiaux (OilPrice.com, FXStreet,
+  Investing.com, Mining.com, Nasdaq, MarketWatch, CNBC, Yahoo Finance, Guardian, Sky News,
+  Financial Times, SCMP, Times of India, Deutsche Welle, ABC Australia, Straits Times,
+  Al Jazeera, BFM Bourse, Le Figaro, Le Monde...), classification par mots-clés
+  (or / pétrole / matières premières / banques centrales), traduction français
   (MyMemory Translator, avec Google Translate en secours), déduplication.
 - `refresh.py` : génère `docs/news.json` (utilisé par GitHub Actions pour la version statique).
 - `app.py` : serveur Flask local avec rafraîchissement automatique en tâche de fond.
@@ -40,6 +42,15 @@ tunnel Cloudflare vers d'autres appareils, bouton de rafraîchissement manuel im
 Ajoute une entrée dans la liste `FEEDS` de `core.py` avec son URL RSS, un nom, et
 `always_relevant=True` si le flux est déjà 100% dédié aux matières premières (sinon
 `False` pour qu'il passe par le filtre de mots-clés).
+
+## Limites connues
+
+- **Réseaux sociaux officiels (X/Twitter)** : non intégrés — l'API X est payante depuis 2023,
+  aucune solution gratuite fiable n'existe pour l'ingestion automatisée.
+- **Télévision** : les chaînes (Bloomberg TV, CNBC) publient leurs extraits sur YouTube, mais
+  Google bloque le scraping automatisé des pages de chaîne (mur de consentement) — donc pas
+  d'intégration fiable pour l'instant. Les dépêches écrites de ces mêmes rédactions (CNBC,
+  Bloomberg via d'autres flux) restent couvertes.
 
 ## Mise à jour du cache de traduction
 
